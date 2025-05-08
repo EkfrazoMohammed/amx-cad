@@ -1,0 +1,30 @@
+[
+    {
+        "id": "SATTVA_Kaggalipura",
+        "models": [{
+            "modelId": "3",
+            "src": "models/dxf/SATTVA_Kaggalipura.dxf"
+        }]
+    },
+    {
+        "id": "SATTVA_Kaggalipura_Contour",
+        "models": [{
+            "modelId": "6",
+            "src": "models/dxf/SATTVA_Kaggalipura_Contour.dxf"
+        }]
+    },
+    {
+        "id": "mercedes",
+        "models": [{
+            "modelId": "7",
+            "src": "models/dxf/mercedes.dxf"
+        }]
+    },
+    {
+        "id": "bmw",
+        "models": [{
+            "modelId": "8",
+            "src": "models/dxf/bmw.dxf"
+        }]
+    }
+]

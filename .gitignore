@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/public/libs/dxf-viewer/node_modules/
+
 /.pnp
 .pnp.js
 
