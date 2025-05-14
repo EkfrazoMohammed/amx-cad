@@ -362,7 +362,8 @@ function UploadDxfView() {
       inputRef.current.value = "";
       console.log("Step 14: Input value reset:", inputRef.current.value);
 
-      const proxyUrl = `http://localhost:3001/proxy_dxf_view?url=${encodeURIComponent(fileUrl)}`;
+      // const proxyUrl = `http://localhost:3001/proxy_dxf_view?url=${encodeURIComponent(fileUrl)}`;
+      const proxyUrl = `https://fibregrid.amxdrones.com/dronecount/proxy_dxf_view/?url=${encodeURIComponent(fileUrl)}`;
       console.log("Step 15: Fetching from proxy URL:", proxyUrl);
       const response = await fetch(proxyUrl, {
         method: "GET",
