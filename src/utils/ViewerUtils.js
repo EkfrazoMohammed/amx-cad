@@ -1,4 +1,4 @@
-// import * as VIEWER from "../../public/libs/dxf-viewer";
+// import * as VIEWER from "../../public/libs2/dxf-viewer";
 // const VIEWER = window;
 import * as VIEWER from "dxf-viewer";
 import { FontFiles } from "../constants/Consts";
@@ -16,19 +16,26 @@ export const createViewer = async (viewerCfg = {}) => {
   const viewer = new VIEWER.Viewer2d(viewerCfg);
 
   const menuConfig = {
-    [VIEWER.ToolbarMenuId.Settings]: {
-      onActive: () => alert("API is ready, but UI is not implemented yet!"),
-      onDeactive: () => {},
-      mutexIds: [
-        VIEWER.ToolbarMenuId.Measure,
-        VIEWER.ToolbarMenuId.MeasureDistance,
-        VIEWER.ToolbarMenuId.MeasureArea,
-        VIEWER.ToolbarMenuId.MeasureAngle,
-        VIEWER.ToolbarMenuId.MeasureCoordinate,
-      ],
-    },
+    // [VIEWER.ToolbarMenuId.Settings]: {
+    //   onActive: () => {
+    //     alert("API is ready, but UI is not implemented yet!")
+    //     console.log('hi')
+    //   },
+    //   onDeactive: () => {},
+    //   mutexIds: [
+    //     VIEWER.ToolbarMenuId.Measure,
+    //     VIEWER.ToolbarMenuId.MeasureDistance,
+    //     VIEWER.ToolbarMenuId.MeasureArea,
+    //     VIEWER.ToolbarMenuId.MeasureAngle,
+    //     VIEWER.ToolbarMenuId.MeasureCoordinate,
+    //   ],
+    // },
     [VIEWER.ToolbarMenuId.Layers]: {
-      onActive: () => alert("API is ready, but UI is not implemented yet!"),
+       onActive: () => {
+        alert("API is ready, but UI is not implemented yet!")
+        console.log('hi')
+      },
+      // onActive: () => alert("API is ready, but UI is not implemented yet!"),
       onDeactive: () => {},
       mutexIds: [
         VIEWER.ToolbarMenuId.Measure,

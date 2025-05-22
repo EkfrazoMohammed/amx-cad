@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 // import * as VIEWER from "dxf-viewer";
-// import * as VIEWER from "../../public/libs/dxf-viewer";
+// import * as VIEWER from "../../public/libs2/dxf-viewer";
 import NavigationPanel from "../components/NavigationPanel.jsx";
 // import { ExamplesContext } from "../context/ExamplesContext";
 import { createViewer } from "../utils/ViewerUtils";

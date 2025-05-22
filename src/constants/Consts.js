@@ -1,3 +1,8 @@
 export const ExamplesFileUrl = "examples.json";
 
-export const FontFiles = ["libs/fonts/simplex.shx", "libs/fonts/hztxt.shx", "libs/fonts/arial.ttf", "libs/fonts/Microsoft_YaHei.ttf"]
+export const FontFiles = [
+  "libs2/fonts/simplex.shx",
+  "libs2/fonts/hztxt.shx",
+  "libs2/fonts/arial.ttf",
+  "libs2/fonts/Microsoft_YaHei.ttf",
+];
