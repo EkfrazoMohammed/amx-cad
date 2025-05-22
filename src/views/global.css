@@ -87,3 +87,6 @@ a {
   text-decoration: none;
 }
 
+.statsOutput{
+  display: none !important;
+}

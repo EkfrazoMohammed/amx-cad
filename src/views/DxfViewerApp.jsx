@@ -4,23 +4,21 @@ import { FontFiles } from '../constants/Consts';
 import './global.css';
 import './iconfont/iconfont.css';
 import './iconfont/iconfont2.css';
-// import './compare/dxfComparePanel.css';
-// import './settings/SettingsPanel.css';
 
 const DxfViewerApp = () => {
   const viewerRef = useRef(null);
   const toolbarRef = useRef(null);
-  const settingsPanelRef = useRef(null);
   const layerManagerRef = useRef(null);
   const markupToolbarRef = useRef(null);
   const exitButtonRef = useRef(null);
   const pdfPageDropdownRef = useRef(null);
   const [markupData, setMarkupData] = useState([]);
   const [measurementData, setMeasurementData] = useState([]);
-  const [isShowMarkup, setIsShowMarkup] = useState(true);
-
+ 
   const language = 'en';
   const isMobile = /mobile/i.test(navigator.userAgent);
+ 
+
 
   useEffect(() => {
     const viewerCfg = {
@@ -31,44 +29,6 @@ const DxfViewerApp = () => {
       enableLayoutBar: true,
       enableLocalCache: false,
       toolbarMenuConfig: {
-        // [VIEWER.ToolbarMenuId.Markup]: {
-        //   onClick: (viewer, toolbar) => {
-        //     viewer.deactivateMeasurement();
-        //     viewer.toolbar?.updateMenu(VIEWER.ToolbarMenuId.Measure, { defaultActive: false });
-        //     viewer.deactivateZoomRect();
-        //     viewer.toolbar?.setActive(VIEWER.ToolbarMenuId.ZoomToRectangle, false);
-
-        //     const markups = viewer.getMarkups();
-        //     markups.forEach((m) => viewer.setMarkupVisibility(m.id, true));
-        //     viewer.toolbar?.setActive(VIEWER.ToolbarMenuId.MarkupVisibility, false);
-        //     viewer.activateMarkup(VIEWER.MarkupType.CloudLineRectangle);
-        //     toolbar.hide();
-        //     createMarkupToolbar();
-        //   },
-        // },
-        // [VIEWER.ToolbarMenuId.Settings]: {
-        //   onActive: () => {
-        //     console.log('[Toolbar]', 'Activate Settings');
-        //     if (!settingsPanelRef.current) {
-        //       settingsPanelRef.current = new VIEWER.Viewer2dSettingsPanel(viewerRef.current);
-        //     }
-        //     settingsPanelRef.current.show();
-        //   },
-        //   onDeactive: () => {
-        //     console.log('[Toolbar]', 'Deactivate Settings');
-        //     if (!settingsPanelRef.current) {
-        //       settingsPanelRef.current = new VIEWER.Viewer2dSettingsPanel(viewerRef.current);
-        //     }
-        //     settingsPanelRef.current.hide();
-        //   },
-        //   mutexIds: [
-        //     VIEWER.ToolbarMenuId.Measure,
-        //     VIEWER.ToolbarMenuId.MeasureDistance,
-        //     VIEWER.ToolbarMenuId.MeasureArea,
-        //     VIEWER.ToolbarMenuId.MeasureAngle,
-        //     VIEWER.ToolbarMenuId.MeasureCoordinate,
-        //   ],
-        // },
         [VIEWER.ToolbarMenuId.Layers]: {
           onActive: () => {
             console.log('[Toolbar]', 'Activate Layers');
@@ -203,71 +163,6 @@ const DxfViewerApp = () => {
     };
   }, [markupData, measurementData]);
 
-  const createMarkupToolbar = () => {
-    if (markupToolbarRef.current) {
-      markupToolbarRef.current.remove();
-    }
-    const markupContainer = document.createElement('div');
-    markupContainer.id = 'markup-toolbar';
-    markupContainer.classList.add('markup-toolbar');
-    const type2Name = {
-      [VIEWER.MarkupType.Arrow]: '箭头',
-      [VIEWER.MarkupType.Rectangle]: '矩形框',
-      [VIEWER.MarkupType.CloudLineRectangle]: '云线框',
-      [VIEWER.MarkupType.PolyLine]: '多段线',
-      [VIEWER.MarkupType.Ellipse]: '椭圆',
-      [VIEWER.MarkupType.Circle]: '圆',
-      [VIEWER.MarkupType.Text]: '文字',
-      ['ClearMarkup']: '清除批注',
-      ['QuitMarkup']: '退出批注',
-    };
-    let lastTarget;
-    [
-      VIEWER.MarkupType.Arrow,
-      VIEWER.MarkupType.Rectangle,
-      VIEWER.MarkupType.CloudLineRectangle,
-      VIEWER.MarkupType.PolyLine,
-      VIEWER.MarkupType.Ellipse,
-      VIEWER.MarkupType.Circle,
-      VIEWER.MarkupType.Text,
-      'ClearMarkup',
-      'QuitMarkup',
-    ].forEach(type => {
-      const item = document.createElement('div');
-      item.classList.add('toolbar-item');
-      const btn = document.createElement('span');
-      btn.dataset.type = type;
-      btn.innerText = type2Name[type];
-      if (type === VIEWER.MarkupType.CloudLineRectangle) {
-        btn.classList.add('toolbar-item-active');
-        lastTarget = btn;
-      }
-      item.appendChild(btn);
-      markupContainer.appendChild(item);
-    });
-    markupContainer.addEventListener('touchend', (e) => {
-      if (e.target.dataset.type === 'ClearMarkup') {
-        viewerRef.current.clearMarkups();
-        return;
-      } else if (e.target.dataset.type === 'QuitMarkup') {
-        viewerRef.current.deactivateMarkup();
-        markupContainer.style.display = 'none';
-        toolbarRef.current.show();
-        return;
-      }
-      if (lastTarget) {
-        lastTarget.classList.remove('toolbar-item-active');
-      }
-      if (e.target instanceof HTMLSpanElement) {
-        e.target.classList.add('toolbar-item-active');
-      }
-      lastTarget = e.target;
-      viewerRef.current.activateMarkup(e.target.dataset.type);
-    });
-    document.body.appendChild(markupContainer);
-    markupToolbarRef.current = markupContainer;
-  };
-
   const createMobileExitButton = () => {
     const button = document.createElement('button');
     button.innerText = 'X';
@@ -317,6 +212,30 @@ const DxfViewerApp = () => {
     modelUploader.openFileBrowserToUpload();
   };
 
+   const [fileUrl, setFileUrl] = useState("");
+
+
+//  useEffect(() => {
+//     const params = new URLSearchParams(window.location.search);
+//     // const cadUrlParam = params.get("cadurl");
+//     const cadUrlParam = params.get("fileUrl");
+//     if (cadUrlParam) {
+//       console.log("Step 0: Found cadurl param:", cadUrlParam);
+//       setFileUrl(cadUrlParam);
+//     }
+//   }, []);
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const cadUrlParam = params.get("fileUrl");
+  if (cadUrlParam && /\.(dxf|dwg)$/i.test(cadUrlParam)) {
+    console.log("Step 0: Found valid cadurl param:", cadUrlParam);
+    setFileUrl(cadUrlParam);
+    viewerRef.current.loadModel({ src: cadUrlParam, merge: true }).then(() => {
+      console.log(`[Demo] Loaded model ${cadUrlParam}`);
+    });
+  }
+}, []);
   const handleLoadDxf = () => {
     const url = document.getElementById('fileUrlInput')?.value;
     if (url) {
@@ -339,7 +258,7 @@ const DxfViewerApp = () => {
           pointerEvents: 'none',
         }}
       >
-        <div className="upload-btn" style={{ pointerEvents: 'auto' }}>
+        {/* <div className="upload-btn" style={{ pointerEvents: 'auto' }}>
           <button
             id="uploadModelFile"
             type="button"
@@ -384,8 +303,8 @@ const DxfViewerApp = () => {
             </svg>
             <span>Upload dxf</span>
           </label>
-        </div>
-        <div
+        </div> */}
+        {/* <div
           style={{
             marginTop: '1em',
             pointerEvents: 'auto',
@@ -396,6 +315,8 @@ const DxfViewerApp = () => {
         >
           <input
             id="fileUrlInput"
+             value={fileUrl}
+              onChange={(e) => setFileUrl(e.target.value)}
             style={{ display: 'inline-block', width: '20em', height: '2em' }}
           />
           <button
@@ -411,7 +332,7 @@ const DxfViewerApp = () => {
           >
             Load dxf
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
