@@ -236,3 +236,19 @@
 .icon-move:before {
   content: "\e61e";
 }
+
+
+.toolbar-group > #Settings,.toolbar-group > #MarkupVisibility,.toolbar-group > #Markup,.toolbar-group > #GetScreenshot,.toolbar-group > #Measure {
+  display: none !important;
+}
+
+#Layers ~ .toolbar-group-division,#MarkupVisibility ~ .toolbar-group-division {
+  display: none !important;
+}
+
+.toolbar .toolbar-group-division {
+  width: 1px;
+    background-color: #999c;
+    height: 60%;
+    display: none !important; 
+}

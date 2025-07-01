@@ -49,6 +49,10 @@ const DxfViewerApp = () => {
             VIEWER.ToolbarMenuId.MeasureCoordinate,
           ],
         },
+         // You can add this block if Screenshot is being shown:
+  [VIEWER.ToolbarMenuId.Screenshot]: {
+    hide: true
+  }
       },
     };
 
@@ -63,7 +67,7 @@ const DxfViewerApp = () => {
       new VIEWER.BottomBarPlugin(viewer);
       // new VIEWER.MarkupPlugin(viewer);
       new VIEWER.MeasurementPlugin(viewer, { language });
-      new VIEWER.ScreenshotPlugin(viewer);
+      // new VIEWER.ScreenshotPlugin(viewer);
       new VIEWER.StatsPlugin(viewer);
       toolbarRef.current = new VIEWER.Viewer2dToolbarPlugin(viewer, { menuConfig: viewerCfg.toolbarMenuConfig, language });
 

@@ -242,4 +242,18 @@
 .icon-a-ziyuan61-copy:before {
   content: "\e615";
 }
+#MarkupVisibility ~ .toolbar-group-division {
+  display: none !important;
+}
+
+.toolbar .toolbar-group-division {
+  width: 1px;
+    background-color: #999c;
+    height: 60%;
+    display: none !important; 
+}
+
+#Layers ~ .toolbar-group-division,#MarkupVisibility ~ .toolbar-group-division {
+  display: none !important;
+}
 
