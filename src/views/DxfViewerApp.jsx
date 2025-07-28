@@ -14,11 +14,35 @@ const DxfViewerApp = () => {
   const pdfPageDropdownRef = useRef(null);
   const [markupData, setMarkupData] = useState([]);
   const [measurementData, setMeasurementData] = useState([]);
+  console.table(measurementData)
  
   const language = 'en';
   const isMobile = /mobile/i.test(navigator.userAgent);
  
 
+//   const unitsMap = {
+//   0: 'unitless',
+//   1: 'inches',
+//   2: 'feet',
+//   3: 'miles',
+//   4: 'millimeters',
+//   5: 'centimeters',
+//   6: 'meters',
+//   7: 'kilometers',
+//   8: 'microinches',
+//   9: 'mils',
+//   10: 'yards',
+//   11: 'angstroms',
+//   12: 'nanometers',
+//   13: 'microns',
+//   14: 'decimeters',
+//   15: 'decameters',
+//   16: 'hectometers',
+//   17: 'gigameters',
+//   18: 'astronomical units',
+//   19: 'light years',
+//   20: 'parsecs',
+// };
 
   useEffect(() => {
     const viewerCfg = {
@@ -74,11 +98,7 @@ const DxfViewerApp = () => {
       const modelUploader = new VIEWER.LocalDxfUploader(viewer);
       modelUploader.setPdfWorker('/libs/pdf/pdf.worker.min.js');
       modelUploader.onSuccess = (event) => {
-        // if (event && event.compare) {
-        //   if (!viewer.dxfComparePanel) {
-        //     viewer.dxfComparePanel = new VIEWER.DxfComparePanel(viewer);
-        //   }
-        // }
+    
         const pdfLoaderPlugin = viewer.findPlugin('PdfLoaderPlugin');
         if (pdfLoaderPlugin) {
           const pageCount = pdfLoaderPlugin.getPageCount();
@@ -86,11 +106,11 @@ const DxfViewerApp = () => {
         }
       };
 
-      viewer.addEventListener(VIEWER.ViewerEvent.LayoutChange, () => {
-        const layoutName = viewer.getActiveLayoutName();
-        viewer.setMarkups(markupData.filter(markup => markup.layoutName === layoutName));
-        viewer.setMeasurements(measurementData.filter(measure => measure.layoutName === layoutName));
-      });
+      // viewer.addEventListener(VIEWER.ViewerEvent.LayoutChange, () => {
+      //   const layoutName = viewer.getActiveLayoutName();
+      //   viewer.setMarkups(markupData.filter(markup => markup.layoutName === layoutName));
+      //   viewer.setMeasurements(measurementData.filter(measure => measure.layoutName === layoutName));
+      // });
 
       viewer.addEventListener(VIEWER.ViewerEvent.MarkupAdd, (data) => {
         console.log('MarkupAdded', data);
@@ -123,21 +143,69 @@ const DxfViewerApp = () => {
         console.log('MarkupRemoved', data);
         setMarkupData(prev => prev.filter(markup => markup.id !== data.id));
       });
-
+      
       viewer.addEventListener(VIEWER.ViewerEvent.MeasurementAdd, (data) => {
-        console.log('MeasurementAdded', data);
-        const layoutName = viewer.getActiveLayoutName();
-        data.layoutName = layoutName;
-        setMeasurementData(prev => {
-          const index = prev.findIndex(measurement => measurement.id === data.id);
-          if (index > -1) {
-            const newData = [...prev];
-            newData.splice(index, 1, data);
-            return newData;
-          }
-          return [...prev, data];
-        });
-      });
+  console.log('MeasurementAdded', data);
+  const layoutName = viewer.getActiveLayoutName();
+
+  // Extract measurement points
+  const [p1, p2] = data.points;
+  const dx = p2[0] - p1[0];
+  const dy = p2[1] - p1[1];
+  const dz = p2[2] - p1[2];
+
+  const rawDistance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+  // Get current drawing units from viewer
+  const modelUnits = viewerRef.current?.units || 0;
+
+  // Convert to inches
+  const unitToInchMap = {
+    0: 1,               // unitless (assume inches?)
+    1: 1,               // inches
+    2: 12,              // feet → inches
+    3: 63360,           // miles → inches
+    4: 0.0393701,       // mm → inches
+    5: 0.393701,        // cm → inches
+    6: 39.3701,         // meters → inches
+    7: 39370.1,         // km → inches
+    8: 0.000001,        // microinch (already inch)
+    9: 0.001,           // mils → inches
+    10: 36,             // yards → inches
+    11: 3.93701e-9,     // angstroms → inches
+    12: 3.93701e-8,     // nanometers → inches
+    13: 3.93701e-5,     // microns → inches
+    14: 3.93701,        // decimeters → inches
+    15: 393.701,        // decameters → inches
+    16: 3937.01,        // hectometers → inches
+    17: 3.93701e+6,     // gigameters → inches
+    18: 5.90057e+12,    // astronomical units → inches
+    19: 3.724e+17,      // light years → inches
+    20: 1.550e+18       // parsecs → inches
+  };
+
+  const convertedDistance = rawDistance * (unitToInchMap[modelUnits] || 1);
+
+  const cleanMeasurement = {
+    id: data.id,
+    type: data.type,
+    label: 'Distance',
+    value: convertedDistance.toFixed(2), // rounded to 2 decimals
+    layoutName,
+  };
+
+  console.log(cleanMeasurement);
+
+  setMeasurementData((prev) => {
+    const index = prev.findIndex((m) => m.id === cleanMeasurement.id);
+    if (index > -1) {
+      const newData = [...prev];
+      newData[index] = cleanMeasurement;
+      return newData;
+    }
+    return [...prev, cleanMeasurement];
+  });
+});
 
       viewer.addEventListener(VIEWER.ViewerEvent.MeasurementRemove, (data) => {
         console.log('MeasurementRemoved', data);
@@ -165,7 +233,7 @@ const DxfViewerApp = () => {
     return () => {
       viewer.destroy();
     };
-  }, [markupData, measurementData]);
+  }, []);
 
   const createMobileExitButton = () => {
     const button = document.createElement('button');
@@ -200,7 +268,7 @@ const DxfViewerApp = () => {
 
   const handleUploadClick = () => {
     const modelUploader = new VIEWER.LocalDxfUploader(viewerRef.current);
-    modelUploader.setPdfWorker('/libs/pdf/pdf.worker.min.js');
+    modelUploader.setPdfWorker('libs/pdf/pdf.worker.min.js');
     modelUploader.onSuccess = (event) => {
       // if (event && event.compare) {
       //   if (!viewerRef.current.dxfComparePanel) {
@@ -218,17 +286,6 @@ const DxfViewerApp = () => {
 
    const [fileUrl, setFileUrl] = useState("");
 
-
-//  useEffect(() => {
-//     const params = new URLSearchParams(window.location.search);
-//     // const cadUrlParam = params.get("cadurl");
-//     const cadUrlParam = params.get("fileUrl");
-//     if (cadUrlParam) {
-//       console.log("Step 0: Found cadurl param:", cadUrlParam);
-//       setFileUrl(cadUrlParam);
-//     }
-//   }, []);
-
 useEffect(() => {
   const params = new URLSearchParams(window.location.search);
   const cadUrlParam = params.get("fileUrl");
@@ -236,6 +293,7 @@ useEffect(() => {
     console.log("Step 0: Found valid cadurl param:", cadUrlParam);
     setFileUrl(cadUrlParam);
     viewerRef.current.loadModel({ src: cadUrlParam, merge: true }).then(() => {
+      console.log(viewerRef.current.units)
       console.log(`[Demo] Loaded model ${cadUrlParam}`);
     });
   }
@@ -244,6 +302,8 @@ useEffect(() => {
     const url = document.getElementById('fileUrlInput')?.value;
     if (url) {
       viewerRef.current.loadModel({ src: url, merge: true }).then(() => {
+          console.log(viewerRef.current.units)
+   
         console.log(`[Demo] Loaded model ${url}`);
       });
     }
@@ -337,6 +397,27 @@ useEffect(() => {
             Load dxf
           </button>
         </div> */}
+       
+       <div style={{
+          position: 'absolute',
+          top: '60px',
+          right: '100px',
+          backgroundColor: 'rgba(255,255,255,0.9)',
+          padding: '10px',
+          borderRadius: '8px',
+          maxWidth: '200px',
+          fontSize: '14px',
+          zIndex: 9999,
+        }}>
+          <h4>Measurements</h4>
+          {measurementData.map(m => (
+            <div key={m.id}>
+              {m.label}: {m.value} {viewerRef.current?.units}
+            </div>
+          ))}
+        </div>
+
+
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ function App() {
   return (
     <>
       <nav>
-        <NavLink to="/" end>
+        <NavLink to="/static/cadViewer/" end>
           AMX Fibregrid CAD Viewer
         </NavLink>
       </nav>

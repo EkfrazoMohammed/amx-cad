@@ -238,10 +238,15 @@
 }
 
 
-.toolbar-group > #Settings,.toolbar-group > #MarkupVisibility,.toolbar-group > #Markup,.toolbar-group > #GetScreenshot,.toolbar-group > #Measure {
+/* .toolbar-group > #Settings,.toolbar-group > #MarkupVisibility,.toolbar-group > #Markup,.toolbar-group > #GetScreenshot,.toolbar-group > #Measure {
   display: none !important;
 }
+   */
 
+
+   .toolbar-group > #Settings,.toolbar-group > #MarkupVisibility,.toolbar-group > #Markup,.toolbar-group > #GetScreenshot{
+  display: none !important;
+}
 #Layers ~ .toolbar-group-division,#MarkupVisibility ~ .toolbar-group-division {
   display: none !important;
 }
