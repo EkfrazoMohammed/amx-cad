@@ -19,32 +19,8 @@ const DxfViewerApp = () => {
   const language = 'en';
   const isMobile = /mobile/i.test(navigator.userAgent);
  
-
-//   const unitsMap = {
-//   0: 'unitless',
-//   1: 'inches',
-//   2: 'feet',
-//   3: 'miles',
-//   4: 'millimeters',
-//   5: 'centimeters',
-//   6: 'meters',
-//   7: 'kilometers',
-//   8: 'microinches',
-//   9: 'mils',
-//   10: 'yards',
-//   11: 'angstroms',
-//   12: 'nanometers',
-//   13: 'microns',
-//   14: 'decimeters',
-//   15: 'decameters',
-//   16: 'hectometers',
-//   17: 'gigameters',
-//   18: 'astronomical units',
-//   19: 'light years',
-//   20: 'parsecs',
-// };
-
   useEffect(() => {
+    setMeasurementData([])
     const viewerCfg = {
       containerId: 'myCanvas',
       language,
@@ -78,6 +54,7 @@ const DxfViewerApp = () => {
     hide: true
   }
       },
+
     };
 
     const viewer = new VIEWER.Viewer2d(viewerCfg);
@@ -184,7 +161,7 @@ const DxfViewerApp = () => {
     20: 1.550e+18       // parsecs → inches
   };
 
-  const convertedDistance = rawDistance * (unitToInchMap[modelUnits] || 1);
+  const convertedDistance = rawDistance * (unitToInchMap[modelUnits] || 2);
 
   const cleanMeasurement = {
     id: data.id,
@@ -322,82 +299,7 @@ useEffect(() => {
           pointerEvents: 'none',
         }}
       >
-        {/* <div className="upload-btn" style={{ pointerEvents: 'auto' }}>
-          <button
-            id="uploadModelFile"
-            type="button"
-            style={{ width: '0.1px', height: '0.1px', opacity: 0 }}
-            onClick={handleUploadClick}
-          >
-            Click to upload dxf/pdf file(s)
-          </button>
-          <label
-            htmlFor="uploadModelFile"
-            title="Choose one or more dxf/pdf files to load"
-            style={{
-              color: '#353535',
-              background: 'gray',
-              border: 0,
-              borderRadius: '3px',
-              fontSize: '1rem',
-              fontWeight: 700,
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              display: 'inline-block',
-              overflow: 'hidden',
-              padding: '0.625rem 1.25rem',
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="17"
-              viewBox="0 0 20 17"
-              style={{
-                width: '1em',
-                height: '1em',
-                verticalAlign: 'middle',
-                fill: 'currentColor',
-                marginTop: '-0.25em',
-                marginRight: '0.25em',
-              }}
-            >
-              <path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z" />
-            </svg>
-            <span>Upload dxf</span>
-          </label>
-        </div> */}
-        {/* <div
-          style={{
-            marginTop: '1em',
-            pointerEvents: 'auto',
-            width: 'fit-content',
-            left: 'calc(50% - 200px)',
-            position: 'absolute',
-          }}
-        >
-          <input
-            id="fileUrlInput"
-             value={fileUrl}
-              onChange={(e) => setFileUrl(e.target.value)}
-            style={{ display: 'inline-block', width: '20em', height: '2em' }}
-          />
-          <button
-            style={{
-              width: '8em',
-              height: '2em',
-              color: '#fff',
-              opacity: 1,
-              background: '#000',
-              cursor: 'pointer',
-            }}
-            onClick={handleLoadDxf}
-          >
-            Load dxf
-          </button>
-        </div> */}
-       
+        {measurementData.length > 0 && (
        <div style={{
           position: 'absolute',
           top: '60px',
@@ -409,16 +311,23 @@ useEffect(() => {
           fontSize: '14px',
           zIndex: 9999,
         }}>
+         
           <h4>Measurements</h4>
           {measurementData.map(m => (
-            <div key={m.id}>
-              {m.label}: {m.value} {viewerRef.current?.units}
-            </div>
+<div key={m.id}>
+  {m.type == 'Area' ? (
+    <div>Area: {m.value} {viewerRef.current?.units}²</div>  // Special display for area
+  ) : (
+    <div>
+      {m.type}: {m.value} {viewerRef.current?.units}
+    </div>
+  )}
+</div>
           ))}
+          </div>
+           )}
         </div>
 
-
-      </div>
     </div>
   );
 };
